@@ -97,7 +97,7 @@ void print_total_spend() {
 }
 
 void advice() {
-
+    printf("save your money\n");
 }
 
 void moneyWrite() {
