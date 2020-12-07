@@ -174,53 +174,6 @@ void moneyWrite() {
     fclose(rCategory);
 }
 
-/*
-moneybook categoryRead() {
-    FILE *rplan;
-    moneybook *mb;
-    char buf[1024];
-    int i = 0, n;
-
-    char date[6];
-    char category[20];
-    int money;
-
-    int k;
-
-    for(int j = 0; j < 10; j++) {
-        mb.category_count[j] = 0;
-    }
-
-    if((rplan = fopen("moneyPlan.txt", "r")) == NULL) {
-        printf("No file! Write your money!\n");
-        return;
-    }
-    else {
-        while((n = fscanf(rplan, "%s %s %d", date, category, &money)) != EOF) {
-            //strcpy(date, mb.date);
-
-            for(int j = 0; j < 10; j++) {
-                if(strcmp(mb.category[j], category) == 0) {
-                    mb.category_count[j]++;
-                    strcpy(date, mb.date);
-                    mb.money = money;
-                }
-
-                if((strcmp(mb.category[j], category) != 0) && j == 9) {
-                    k = 0;
-                }
-            }
-
-            
-            if(k == 0) {
-
-            }
-            
-        }
-    }
-}
-*/
-
 void moneyRead() {
     int opt;
 
