@@ -27,34 +27,6 @@ typedef struct
     int category_count[10]; // count
 }moneybook;
 
-char *strrstr(const char *haystack, const char *needle) { 
-    int haystack_len; 
-    int needle_len; 
-    char *ptr; haystack_len = strlen(haystack); 
-    needle_len = strlen(needle); 
-
-    if(needle_len == 0) { 
-        return (char *)haystack; 
-    } 
-
-    if(needle_len > haystack_len) { 
-        return NULL; 
-    } 
-
-    ptr = (char *)haystack + haystack_len - needle_len; 
-
-    while(1) { 
-        if(strncmp(ptr, needle, needle_len) == 0) { 
-            return ptr; 
-        } 
-        if(ptr == haystack) { 
-            break; 
-        } 
-    } 
-    return NULL; 
-}
-
-
 int option() {
     int opt;
 
@@ -267,29 +239,6 @@ void addCategory() {
     printf("===== SUCCESSS WRITE CATEGORY =====\n");
 
     fclose(wCategory);
-}
-
-void Eliminate(char *str, char *ch) {
-    int len;
-    char *p_pos;
-    
-    while(*str) {
-        if(*str++ == *ch) {
-            for(len = 1; *(ch + len); len++) {
-                if(*str++ != *(ch + len)) {
-                    break;
-                }
-            }
-            if(*(ch + len) == 0) {
-                ch -= len;
-                for(p_pos = ch; *(p_pos+len); p_pos++) {
-                    *p_pos = *(p_pos + len);
-                }
-                *p_pos = 0;
-            }
-        }
-    }
-    //printf("p_pos : %s\n", p_pos);
 }
 
 void subCategory() {
