@@ -27,6 +27,34 @@ typedef struct
     int category_count[10]; // count
 }moneybook;
 
+char *strrstr(const char *haystack, const char *needle) { 
+    int haystack_len; 
+    int needle_len; 
+    char *ptr; haystack_len = strlen(haystack); 
+    needle_len = strlen(needle); 
+
+    if(needle_len == 0) { 
+        return (char *)haystack; 
+    } 
+
+    if(needle_len > haystack_len) { 
+        return NULL; 
+    } 
+
+    ptr = (char *)haystack + haystack_len - needle_len; 
+
+    while(1) { 
+        if(strncmp(ptr, needle, needle_len) == 0) { 
+            return ptr; 
+        } 
+        if(ptr == haystack) { 
+            break; 
+        } 
+    } 
+    return NULL; 
+}
+
+
 int option() {
     int opt;
 
@@ -34,9 +62,8 @@ int option() {
     printf("1. write\n");
     printf("2. read\n");
     printf("3. plan\n");
-    printf("4. download\n");
-    printf("5. category setting\n");
-    printf("6. QUIT\n");
+    printf("4. category setting\n");
+    printf("5. QUIT\n");
     printf("OPTION : ");
 
     scanf("%d", &opt);
@@ -130,7 +157,7 @@ void moneyWrite() {
     while(fgets(categoryRead, 100, rCategory) != NULL) {
         printf("%s", categoryRead);
     }
-    printf("===== ======== =====\n");
+    printf("\n===== ======== =====\n");
 
     printf("input your money spend\n");
 
@@ -155,11 +182,11 @@ void moneyWrite() {
     }
 
     fputs(date, wfp);
-    fputs("\t", wfp);
+    fputs(" ", wfp);
     fputs(category, wfp);
-    fputs("\t", wfp);
+    fputs(" ", wfp);
     fputs(money, wfp);
-    fputs("\n", wfp);
+    fputs(" ", wfp);
 
     /*
     a[0] = strtok(str, " ");
@@ -215,12 +242,6 @@ void moneyPlan() {
     }
 }
 
-void download() {
-    // download moneyRead
-    // download moneyPlan
-    
-}
-
 void addCategory() {
     FILE *wCategory;
 
@@ -235,12 +256,12 @@ void addCategory() {
     printf("===== 'quit' is quit writing =====\n");
     while(1)
     {
-        scanf(" %[^\n]s", buf);
+        scanf("%s", buf);
         if(strcmp(buf, "quit") == 0) {
             break;
         }
+        fputs(" ", wCategory);
         fputs(buf, wCategory);
-        fputs("\n", wCategory);
     }
 
     printf("===== SUCCESSS WRITE CATEGORY =====\n");
@@ -276,6 +297,7 @@ void subCategory() {
 
     char categoryRead[100], categoryWrite[100];
     char c[100] = "";
+    char temp[100] = "";
     char *p_pos;
 
     if((rCategory = fopen("moneyCategory.txt", "r")) == NULL) {
@@ -286,28 +308,35 @@ void subCategory() {
     printf("===== CATEGORY LIST =====\n");
 
     while(fgets(categoryRead, 100, rCategory) != NULL) {
-        strcat(c, categoryRead);
+        strcat(temp, categoryRead);
         printf("%s", categoryRead);
     }
+
+    printf("\n===== WRITE DOWN WHICH CATEGORY TO DROP =====\n");
+    printf("===== 'quit' is quit writing =====\n");
+
+
+    printf("input : ");
+    scanf("%s", categoryWrite);
+        
+    p_pos = strstr(categoryRead, categoryWrite);
+    if(p_pos == NULL) {
+        printf("wrong category\n");
+        return;
+    }
+    strncpy(c, temp, strlen(temp)-strlen(p_pos)-1);
+
+    p_pos = p_pos + strlen(categoryWrite);
+    strcat(c, p_pos);
 
     if((wCategory = fopen("moneyCategory.txt", "w")) == NULL) {
         perror("fopen");
         exit(1);
     }
-
-    printf("===== WRITE DOWN WHICH CATEGORY TO DROP =====\n");
-    printf("===== 'quit' is quit writing =====\n");
-    while(1) {
-        scanf("%s", categoryWrite);
-        if(strcmp(categoryWrite, "quit") == 0) {
-            break;
-        }
-        Eliminate(c, categoryWrite);
-        
-    }
     
     fputs(c, wCategory);
-    fputs("\n", wCategory);
+
+    printf("===== DELETE SUCCESS =====\n");
     
     fclose(rCategory);
     fclose(wCategory);
@@ -352,14 +381,10 @@ int main(void) {
                 sleep(1);
                 break;
             case 4:
-                download();
-                sleep(1);
-                break;
-            case 5:
                 categorySetting();
                 sleep(1);
                 break;
-            case 6:
+            case 5:
                 printf("===== QUIT PROGRAM =====\n");
                 exit(0);
         }
