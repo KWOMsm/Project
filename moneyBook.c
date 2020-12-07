@@ -18,13 +18,14 @@ struct write {
 
 static int sum = 0;
 
-struct moneyBook
+typedef struct
 {
     /* data */
     char * category[10];
-    char date;
+    char date[6];
     int money;
-};
+    int category_count[10]; // count
+}moneybook;
 
 int option() {
     int opt;
@@ -34,7 +35,8 @@ int option() {
     printf("2. read\n");
     printf("3. plan\n");
     printf("4. download\n");
-    printf("5. QUIT\n");
+    printf("5. category setting\n");
+    printf("6. QUIT\n");
     printf("OPTION : ");
 
     scanf("%d", &opt);
@@ -104,7 +106,7 @@ void moneyWrite() {
     // 11/19 entertain 1000
     // 11/20 tax 5000
     // moneyBook
-    FILE *wfp;
+    FILE *wfp, *rCategory;
     int c;
 
     char str[100];
@@ -112,44 +114,114 @@ void moneyWrite() {
 
     int i = 0;
 
-    printf("===== CATEGORY =====\n");
-    printf("entertain     tax\n");
+    char date[10];
+    char category[20];
+    char money[10];
 
-    printf("input your money spend : ");
-    scanf(" %[^\n]s", str);
+    char categoryRead[100];
+
+    if((rCategory = fopen("moneyCategory.txt", "r")) == NULL) {
+        printf("Please add category at least 1\n");
+        return;
+    }
+
+    printf("===== CATEGORY =====\n");
+
+    while(fgets(categoryRead, 100, rCategory) != NULL) {
+        printf("%s", categoryRead);
+    }
+    printf("===== ======== =====\n");
+
+    printf("input your money spend\n");
+
+    printf("date: ");
+    scanf("%s", date);
+
+    printf("\ncategory: ");
+    scanf("%s", category);
+
+    printf("\nmoney: ");
+    scanf("%s", money);
+
+    //scanf(" %[^\n]s", str);
 
     //printf("%s\n", str);
     
+    //FILE* write
 
-    if(strcmp(str, "quit") == 0) {
-        exit(0);
+    if((wfp = fopen("moneyWrite.txt", "a")) == NULL) {
+        perror("fopen");
+        exit(1);
     }
-    else {
-       //FILE* write
 
-        if((wfp = fopen("moneyWrite.txt", "a")) == NULL) {
-            perror("fopen");
-            exit(1);
-        }
+    fputs(date, wfp);
+    fputs("\t", wfp);
+    fputs(category, wfp);
+    fputs("\t", wfp);
+    fputs(money, wfp);
+    fputs("\n", wfp);
 
-        fputs(str, wfp);
-        fputs("\n", wfp);
+    /*
+    a[0] = strtok(str, " ");
+    a[1] = strtok(NULL, " ");
+    a[2] = strtok(NULL, " ");
+    sum = atoi(a[2]);
+    */
 
-        a[0] = strtok(str, " ");
-        a[1] = strtok(NULL, " ");
-        a[2] = strtok(NULL, " ");
-        sum = atoi(a[2]);
+    printf("===== SUCCESS WRITE =====\n");
 
-        printf("===== SUCCESS WRITE =====\n");
-
-        fclose(wfp);
-    }
+    fclose(wfp);
+    fclose(rCategory);
 }
 
+/*
+moneybook categoryRead() {
+    FILE *rplan;
+    moneybook *mb;
+    char buf[1024];
+    int i = 0, n;
+
+    char date[6];
+    char category[20];
+    int money;
+
+    int k;
+
+    for(int j = 0; j < 10; j++) {
+        mb.category_count[j] = 0;
+    }
+
+    if((rplan = fopen("moneyPlan.txt", "r")) == NULL) {
+        printf("No file! Write your money!\n");
+        return;
+    }
+    else {
+        while((n = fscanf(rplan, "%s %s %d", date, category, &money)) != EOF) {
+            //strcpy(date, mb.date);
+
+            for(int j = 0; j < 10; j++) {
+                if(strcmp(mb.category[j], category) == 0) {
+                    mb.category_count[j]++;
+                    strcpy(date, mb.date);
+                    mb.money = money;
+                }
+
+                if((strcmp(mb.category[j], category) != 0) && j == 9) {
+                    k = 0;
+                }
+            }
+
+            
+            if(k == 0) {
+
+            }
+            
+        }
+    }
+}
+*/
+
 void moneyRead() {
-    // FILE *
-    // print_total_spend()
-    // advice()
     int opt;
 
     printf("===== READ OPTION =====\n");
@@ -196,6 +268,116 @@ void download() {
     
 }
 
+void addCategory() {
+    FILE *wCategory;
+
+    char buf[100];
+
+    if((wCategory = fopen("moneyCategory.txt", "a")) == NULL) {
+        perror("fopen");
+        exit(1);
+    }
+
+    printf("===== WRITE NEW CATEGORY =====\n");
+    printf("===== 'quit' is quit writing =====\n");
+    while(1)
+    {
+        scanf(" %[^\n]s", buf);
+        if(strcmp(buf, "quit") == 0) {
+            break;
+        }
+        fputs(buf, wCategory);
+        fputs("\n", wCategory);
+    }
+
+    printf("===== SUCCESSS WRITE CATEGORY =====\n");
+
+    fclose(wCategory);
+}
+
+void Eliminate(char *str, char *ch) {
+    int len;
+    char *p_pos;
+    
+    while(*str) {
+        if(*str++ == *ch) {
+            for(len = 1; *(ch + len); len++) {
+                if(*str++ != *(ch + len)) {
+                    break;
+                }
+            }
+            if(*(ch + len) == 0) {
+                ch -= len;
+                for(p_pos = ch; *(p_pos+len); p_pos++) {
+                    *p_pos = *(p_pos + len);
+                }
+                *p_pos = 0;
+            }
+        }
+    }
+    //printf("p_pos : %s\n", p_pos);
+}
+
+void subCategory() {
+    FILE *rCategory, *wCategory;
+
+    char categoryRead[100], categoryWrite[100];
+    char c[100] = "";
+    char *p_pos;
+
+    if((rCategory = fopen("moneyCategory.txt", "r")) == NULL) {
+        printf("No Category\n");
+        return;
+    }
+
+    printf("===== CATEGORY LIST =====\n");
+
+    while(fgets(categoryRead, 100, rCategory) != NULL) {
+        strcat(c, categoryRead);
+        printf("%s", categoryRead);
+    }
+
+    if((wCategory = fopen("moneyCategory.txt", "w")) == NULL) {
+        perror("fopen");
+        exit(1);
+    }
+
+    printf("===== WRITE DOWN WHICH CATEGORY TO DROP =====\n");
+    printf("===== 'quit' is quit writing =====\n");
+    while(1) {
+        scanf("%s", categoryWrite);
+        if(strcmp(categoryWrite, "quit") == 0) {
+            break;
+        }
+        Eliminate(c, categoryWrite);
+        
+    }
+    
+    fputs(c, wCategory);
+    fputs("\n", wCategory);
+    
+    fclose(rCategory);
+    fclose(wCategory);
+}
+
+void categorySetting() {
+    int opt;
+
+    printf("===== CATEGORY OPTION =====\n");
+    printf("1. ADD CATEGORY\n");
+    printf("2. SUB CATEGORY\n");
+
+    scanf("%d", &opt);
+    switch(opt) {
+        case 1:
+            addCategory();
+            break;
+        case 2:
+            subCategory();
+            break;
+    }
+}
+
 int main(void) {
     int opt;
 
@@ -221,6 +403,10 @@ int main(void) {
                 sleep(1);
                 break;
             case 5:
+                categorySetting();
+                sleep(1);
+                break;
+            case 6:
                 printf("===== QUIT PROGRAM =====\n");
                 exit(0);
         }
