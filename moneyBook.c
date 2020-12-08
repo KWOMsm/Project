@@ -17,6 +17,10 @@ struct write {
 #include <string.h>
 
 static int sum = 0;
+static char money[BUFSIZ];
+static char plan_date[BUFSIZ];
+static char  plan_money[BUFSIZ];
+static char *a[3];
 
 typedef struct
 {
@@ -44,7 +48,7 @@ int option() {
 
 void makePlan() {
     FILE *wplan;
-    char buf[100];
+ 
 
     if((wplan = fopen("moneyPlan.txt", "w")) == NULL) {
         perror("fopen");
@@ -52,9 +56,14 @@ void makePlan() {
     }
 
     printf("===== MAKE YOUR PLAN =====\n");
+    printf("date : ");
+    scanf("%s", plan_date);
 
-    scanf(" %[^\n]s", buf);
-    fputs(buf, wplan);
+    printf("\nmoney : ");
+    scanf("%s", plan_money);
+    fputs(plan_date, wplan);
+    fputs(" ",wplan);
+    fputs(plan_money,wplan);
 
     printf("===== SUCCESSS WRITE PLAN =====\n");
 
@@ -64,18 +73,22 @@ void makePlan() {
 void readPlan() {
     FILE *rplan;
     char buf[100];
+    
 
     if((rplan = fopen("moneyPlan.txt", "r")) == NULL) {
         perror("fopen");
         exit(1);
     }
 
-    printf("===== YOUR PLAN =====\n");
-
-    while(fgets(buf, 100, rplan) != NULL) {
-        printf("%s", buf);
+    printf("===== MY PLAN =====\n");
+    fseek(rplan,0,0);
+    while(fgets(buf, 100, rplan)!=NULL) {
+    	a[0]=strtok(buf," ");
+    	a[1]=strtok(NULL,"NULL");
     }
-
+        
+    
+    printf("목표 : %s까지,%s 원 쓰기\n",a[0],a[1]);
     printf("\n===== READ END =====\n");
 
     fclose(rplan);
@@ -98,7 +111,33 @@ void print_total_spend() {
 }
 
 void advice() {
-    printf("save your money\n");
+    FILE *fp;
+    int total;
+    int send=0;
+    char buf[BUFSIZ];
+    int res;
+    int plan;
+    
+    if((fp=fopen("total_send.txt","a+"))==NULL) {
+	    perror("fopen");
+	    exit(1);
+    }
+    
+    fputs(money,fp);
+    fputs("\n",fp);
+    fseek(fp,0,0);
+    while(fgets(buf,100,fp)!=NULL) {
+	    send=atoi(buf);
+	    total+=send;
+    }
+	    readPlan();
+	    printf("Total send : %d\n",total);
+	    plan=atoi(a[1]);
+	    res=plan-total;
+	    printf("목표까지 남은 금액 : %d\n",res);
+	    total=0;
+	    fclose(fp);
+
 }
 
 void moneyWrite() {
