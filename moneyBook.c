@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ncurses.h>
 
+<<<<<<< HEAD
 #define moneyTRUE 1
 #define moneyFALSE 0
 
@@ -13,6 +14,22 @@ static char money[BUFSIZ];
 static char plan_date[BUFSIZ];
 static char  plan_money[BUFSIZ];
 static char *a[3];
+=======
+static int sum = 0;
+static char money[BUFSIZ];
+static char plan_date[BUFSIZ];
+static char  plan_money[BUFSIZ];
+static char *a[3];
+
+typedef struct
+{
+    /* data */
+    char * category[10];
+    char date[6];
+    int money;
+    int category_count[10]; // count
+}moneybook;
+>>>>>>> 1c464bdb7b8f5987e3251afe7e45a724da3e6d0f
 
 int option() {
     int opt;
@@ -455,4 +472,7 @@ int main(void) {
     }
     return 0;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1c464bdb7b8f5987e3251afe7e45a724da3e6d0f
