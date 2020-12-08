@@ -462,7 +462,3 @@ int main(void) {
     }
     return 0;
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> 1c464bdb7b8f5987e3251afe7e45a724da3e6d0f
