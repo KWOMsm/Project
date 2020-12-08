@@ -1,59 +1,18 @@
-/* 
-moneyBook Program
-moneyWrite()
-moneyRead()
-moneyPlan()
-download()
-
-struct write {
-    char *category[] //traffic, food, etc
-    char date
-    int money
-}
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ncurses.h>
+
+#define moneyTRUE 1
+#define moneyFALSE 0
+
+#define KWON_COLOR 1
 
 static int sum = 0;
-
-typedef struct
-{
-    /* data */
-    char * category[10];
-    char date[6];
-    int money;
-    int category_count[10]; // count
-}moneybook;
-
-char *strrstr(const char *haystack, const char *needle) { 
-    int haystack_len; 
-    int needle_len; 
-    char *ptr; haystack_len = strlen(haystack); 
-    needle_len = strlen(needle); 
-
-    if(needle_len == 0) { 
-        return (char *)haystack; 
-    } 
-
-    if(needle_len > haystack_len) { 
-        return NULL; 
-    } 
-
-    ptr = (char *)haystack + haystack_len - needle_len; 
-
-    while(1) { 
-        if(strncmp(ptr, needle, needle_len) == 0) { 
-            return ptr; 
-        } 
-        if(ptr == haystack) { 
-            break; 
-        } 
-    } 
-    return NULL; 
-}
-
+static char money[BUFSIZ];
+static char plan_date[BUFSIZ];
+static char  plan_money[BUFSIZ];
+static char *a[3];
 
 int option() {
     int opt;
@@ -72,7 +31,7 @@ int option() {
 
 void makePlan() {
     FILE *wplan;
-    char buf[100];
+ 
 
     if((wplan = fopen("moneyPlan.txt", "w")) == NULL) {
         perror("fopen");
@@ -80,9 +39,14 @@ void makePlan() {
     }
 
     printf("===== MAKE YOUR PLAN =====\n");
+    printf("date : ");
+    scanf("%s", plan_date);
 
-    scanf(" %[^\n]s", buf);
-    fputs(buf, wplan);
+    printf("\nmoney : ");
+    scanf("%s", plan_money);
+    fputs(plan_date, wplan);
+    fputs(" ",wplan);
+    fputs(plan_money,wplan);
 
     printf("===== SUCCESSS WRITE PLAN =====\n");
 
@@ -92,18 +56,22 @@ void makePlan() {
 void readPlan() {
     FILE *rplan;
     char buf[100];
+    
 
     if((rplan = fopen("moneyPlan.txt", "r")) == NULL) {
         perror("fopen");
         exit(1);
     }
 
-    printf("===== YOUR PLAN =====\n");
-
-    while(fgets(buf, 100, rplan) != NULL) {
-        printf("%s", buf);
+    printf("===== MY PLAN =====\n");
+    fseek(rplan,0,0);
+    while(fgets(buf, 100, rplan)!=NULL) {
+    	a[0]=strtok(buf," ");
+    	a[1]=strtok(NULL,"NULL");
     }
-
+        
+    
+    printf("목표 : %s까지,%s 원 쓰기\n",a[0],a[1]);
     printf("\n===== READ END =====\n");
 
     fclose(rplan);
@@ -126,7 +94,33 @@ void print_total_spend() {
 }
 
 void advice() {
-    printf("save your money\n");
+    FILE *fp;
+    int total;
+    int send=0;
+    char buf[BUFSIZ];
+    int res;
+    int plan;
+    
+    if((fp=fopen("total_send.txt","a+"))==NULL) {
+	    perror("fopen");
+	    exit(1);
+    }
+    
+    fputs(money,fp);
+    fputs("\n",fp);
+    fseek(fp,0,0);
+    while(fgets(buf,100,fp)!=NULL) {
+	    send=atoi(buf);
+	    total+=send;
+    }
+	    readPlan();
+	    printf("Total send : %d\n",total);
+	    plan=atoi(a[1]);
+	    res=plan-total;
+	    printf("목표까지 남은 금액 : %d\n",res);
+	    total=0;
+	    fclose(fp);
+
 }
 
 void moneyWrite() {
@@ -170,12 +164,6 @@ void moneyWrite() {
     printf("\nmoney: ");
     scanf("%s", money);
 
-    //scanf(" %[^\n]s", str);
-
-    //printf("%s\n", str);
-    
-    //FILE* write
-
     if((wfp = fopen("moneyWrite.txt", "a")) == NULL) {
         perror("fopen");
         exit(1);
@@ -186,14 +174,7 @@ void moneyWrite() {
     fputs(category, wfp);
     fputs(" ", wfp);
     fputs(money, wfp);
-    fputs(" ", wfp);
-
-    /*
-    a[0] = strtok(str, " ");
-    a[1] = strtok(NULL, " ");
-    a[2] = strtok(NULL, " ");
-    sum = atoi(a[2]);
-    */
+    fputs("\n", wfp);
 
     printf("===== SUCCESS WRITE =====\n");
 
@@ -269,29 +250,6 @@ void addCategory() {
     fclose(wCategory);
 }
 
-void Eliminate(char *str, char *ch) {
-    int len;
-    char *p_pos;
-    
-    while(*str) {
-        if(*str++ == *ch) {
-            for(len = 1; *(ch + len); len++) {
-                if(*str++ != *(ch + len)) {
-                    break;
-                }
-            }
-            if(*(ch + len) == 0) {
-                ch -= len;
-                for(p_pos = ch; *(p_pos+len); p_pos++) {
-                    *p_pos = *(p_pos + len);
-                }
-                *p_pos = 0;
-            }
-        }
-    }
-    //printf("p_pos : %s\n", p_pos);
-}
-
 void subCategory() {
     FILE *rCategory, *wCategory;
 
@@ -361,6 +319,112 @@ void categorySetting() {
 }
 
 int main(void) {
+    // ncurses
+    int x = 0, y = 0, i = 0;
+	int max_x = 0, max_y = 0;
+	int next_x = 0;
+	int direction = 1;
+	int ch = 0; // init
+	int msg = 0; // init
+	char buffer[8]={0,};
+	WINDOW *mywin = NULL;
+
+    initscr(); // start curses mode
+	cbreak(); // line buffering disabled; pass on everything to me
+
+	if( has_colors() == FALSE ) { // color is not supported
+		endwin();
+		printf("Your terminal does not support color\n");
+		exit(1);
+	}
+	start_color(); // start the color mode
+	/*
+	 * define a new color-pair to use it later
+	 * : init_pair(index, foreground, background)
+	 */
+	init_pair(KWON_COLOR, COLOR_GREEN, COLOR_BLACK);
+	noecho();
+	keypad(stdscr, TRUE); // call after initscr, to understand KEY strokes
+	curs_set(FALSE);
+
+	getmaxyx(stdscr, max_y, max_x);
+	x = max_x / 2;
+	y = max_y / 2;
+
+    int nItem = 5;
+	char menus[5][30]={{"  write"}, {"  read"}, {"  plan"}, {"  category setting"}, {"  QUIT"}};
+	char selMenus[5][30]={{"> write"}, {"> read"}, {"> plan"}, {"> category setting"}, {"> QUIT"}};
+	char description[5][64]={{"Info: Write your expenditure"},{"Info: Check your expenditure"},{"Info: Write your plan!"}, {"Info: Set category"}, {"Info: QUIT PROGRAM"}};
+	int currItem = 0;
+	int cont = moneyTRUE;
+	int nRemainingItems = nItem;
+	// int deleted[5]={0,0,0,0,0};
+	// char *deletedMenu="  (deleted)";
+	// char *deletedMenuSel="> (deleted)";
+	
+	int boxWidth = 20;
+	int boxHeight = 20;
+	int boxY = 20;
+	int boxX = 0;
+
+    while( cont ) { 
+		clear(); // clearn the screen, and place the cursor in upper-left corner
+		// write characters on the buffer, and print out when refresh is called
+		for( i = 0 ; i < nItem ; i++ ) {
+			if( currItem == i ) {
+				attron(COLOR_PAIR(KWON_COLOR));
+				mvprintw(i,0,selMenus[i]);
+				attroff(COLOR_PAIR(KWON_COLOR));
+			} else {
+                mvprintw(i,0,menus[i]);
+            }
+		}
+		mvhline(i, 0, '_', max_x/2); // draw a horizontal line
+		mvprintw(++i,0,description[currItem]); // prints out a message
+		
+		refresh();
+
+		ch = (int) getch();	
+
+		switch( ch ) {
+			case KEY_UP:
+				if( currItem > 0 ) currItem -= 1;
+				break;
+        	case KEY_DOWN:
+				if( currItem + 1 < nItem ) currItem += 1;
+				break;
+            case 10:  
+                switch(currItem) {
+                    case 1:
+                        moneyWrite();
+                        break;
+                    case 2:
+                        moneyRead();
+                        break;
+                    case 3:
+                        moneyPlan();
+                        break;
+                    case 4:
+                        categorySetting();
+                        break;
+                    case 5:
+                        cont = moneyFALSE;
+                }
+                break;
+			case 'q':
+				cont = moneyFALSE;
+				break;
+			default:
+				break;
+		}
+	}
+	endwin();
+
+
+
+
+    // normal
+
     int opt;
 
     while(1) {
@@ -391,3 +455,4 @@ int main(void) {
     }
     return 0;
 }
+
