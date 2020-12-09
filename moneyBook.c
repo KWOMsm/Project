@@ -3,17 +3,11 @@
 #include <string.h>
 //#include <ncurses.h>
 
-#define moneyTRUE 1
-#define moneyFALSE 0
-
-#define KWON_COLOR 1
-
 static int sum = 0;
 static char money[BUFSIZ];
 static char plan_date[BUFSIZ];
 static char  plan_money[BUFSIZ];
 static char *a[3];
-
 
 int option() {
 
@@ -63,7 +57,7 @@ void readPlan() {
     
 
     if((rplan = fopen("moneyPlan.txt", "r")) == NULL) {
-        perror("fopen");
+        printf("Set your plan! And restart!\n");
         exit(1);
     }
 
@@ -102,31 +96,35 @@ void print_total_spend() {
 void advice() {
     FILE *fp;
     int total = 0;
-    int send=0;
+    int send = 0;
     char buf[BUFSIZ];
     int res;
     int plan;
     
-    if((fp=fopen("total_send.txt","a+"))==NULL) {
-	    perror("fopen");
-	    exit(1);
+    if((fp = fopen("total_spend.txt","a+")) == NULL) {
+	    printf("Set your plan!\n");
+	    return;
     }
     
-    fputs(money,fp);
-    fputs("\n",fp);
-    fseek(fp,0,0);
-    while(fgets(buf,100,fp)!=NULL) {
-	    send=atoi(buf);
-	    total+=send;
-    }
-	    readPlan();
-	    printf("Total send : %d\n",total);
-	    plan=atoi(a[1]);
-	    res=plan-total;
-	    printf("목표까지 남은 금액 : %d\n",res);
-	    total=0;
-	    fclose(fp);
+    fputs(money, fp);
+    fputs("\n", fp);
+    fseek(fp, 0, 0);
 
+    while(fgets(buf, 100, fp) != NULL) {
+	    send = atoi(buf);
+	    total += send;
+    }
+
+	readPlan();
+	printf("Total spend : %d\n",total);
+
+	plan = atoi(a[1]);
+	res = plan - total;
+	printf("목표까지 남은 금액 : %d\n",res);
+
+	total=0;
+
+	fclose(fp);
 }
 
 void moneyWrite() {
@@ -144,7 +142,7 @@ void moneyWrite() {
 
     char date[10];
     char category[20];
-    char money[10];
+    //char money[10];
 
     char categoryRead[100];
 
