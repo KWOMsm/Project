@@ -35,3 +35,4 @@
 4. 소비 카테고리 설정하기.
 
 # D. 프로젝트 개발 결과물 소개
+![image](https://user-images.githubusercontent.com/73637543/101609825-c6122180-3a4a-11eb-9c6e-f0cd7fc65501.png)
