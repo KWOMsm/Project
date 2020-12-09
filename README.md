@@ -55,12 +55,59 @@ $ ./moneyBook.exe
 ****
 
 # F. 사용 방법
-## write 기능
+## ● write 기능
 ![image](https://user-images.githubusercontent.com/73637543/101611649-1db18c80-3a4d-11eb-871d-46f4da0f97dc.png)
 
 1. option 메뉴에서 1. write를 선택합니다.
 2. category 항목이 표시되고 date, category, money 순서로 입력합니다.
 3. 엔터키를 누르면 저장이 완료됩니다.
 
-## read 기능
+## ● read 기능
+### * TOTAL SPEND 기능
+![image](https://user-images.githubusercontent.com/73637543/101612160-afb99500-3a4d-11eb-9835-1c21bb008d96.png)
 
+1. option 메뉴에서 2. read를 선택합니다.
+2. read option 메뉴에서 1. total spend를 선택합니다.
+3. 본인이 적었던 지출내역을 확인할 수 있습니다.
+
+### * ADVICE 기능
+#### > plan을 미리 설정해둬야 사용할 수 있습니다.
+![image](https://user-images.githubusercontent.com/73637543/101614050-ceb92680-3a4f-11eb-8c2c-d0996f5e5ac8.png)
+
+1. option 메뉴에서 2. read를 선택합니다.
+2. read option 메뉴에서 2. advice를 선택합니다.
+3. 현재 총 얼마 썻는지 확인이 가능합니다. (*Total spend)
+4. 세웠던 목표에서 돈을 얼마나 더 쓸 수 있는지 확인할 수 있습니다. (*목표까지 남은 금액)
+
+## ● plan 기능
+### * make plan 기능
+![image](https://user-images.githubusercontent.com/73637543/101613517-315df280-3a4f-11eb-84ba-5aca0e9c74bb.png)
+
+1. option 메뉴에서 3. plan을 선택합니다.
+2. plan option 메뉴에서 1. make plan을 선택합니다.
+3. date, money 순으로 작성합니다.
+
+### * read plan 기능
+![image](https://user-images.githubusercontent.com/73637543/101613748-797d1500-3a4f-11eb-981a-d6a201afcbab.png)
+
+1. option 메뉴에서 3. plan을 선택합니다.
+2. plan option 메뉴에서 2. read plan을 선택합니다.
+3. 본인이 설정한 목표를 확인합니다.
+
+## ● category setting 기능
+### * add category 기능
+![image](https://user-images.githubusercontent.com/73637543/101614480-5868f400-3a50-11eb-99ec-d58bd9d1898e.png)
+
+1. option 메뉴에서 4. category setting을 선택합니다.
+2. category option 메뉴에서 1. add category를 선택합니다.
+3. "quit" 을 입력할 때 까지 추가할 수 있습니다.
+
+### * sub category 기능
+![image](https://user-images.githubusercontent.com/73637543/101614870-d0371e80-3a50-11eb-898c-8aef8bd4f85a.png)
+
+1. option 메뉴에서 4. category setting을 선택합니다.
+2. category option 메뉴에서 2.sub category를 선택합니다.
+3. 지우고 싶은 카테고리를 하나 입력합니다.
+
+#### 카테고리 목록에서 사라진 모습
+![image](https://user-images.githubusercontent.com/73637543/101615050-06749e00-3a51-11eb-937f-2c6681d21b28.png)
