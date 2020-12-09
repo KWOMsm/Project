@@ -46,7 +46,21 @@
 # E. 실행 방법
 ## Makefile 실행
 * 실행 파일 이름 : moneyBook.exe
-'''
+
+```
 $ make
 $ ./moneyBook.exe
+```
+
+****
+
+# F. 사용 방법
+## write 기능
+![image](https://user-images.githubusercontent.com/73637543/101611649-1db18c80-3a4d-11eb-871d-46f4da0f97dc.png)
+
+1. option 메뉴에서 1. write를 선택합니다.
+2. category 항목이 표시되고 date, category, money 순서로 입력합니다.
+3. 엔터키를 누르면 저장이 완료됩니다.
+
+## read 기능
 
