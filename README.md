@@ -39,7 +39,7 @@
 ****
 
 # D. 다이어그램
-![image](https://user-images.githubusercontent.com/73637543/101609825-c6122180-3a4a-11eb-9c6e-f0cd7fc65501.png)
+![image](https://user-images.githubusercontent.com/73637543/102040325-dd1c8f00-3e0f-11eb-870d-e524b941ba92.png)
 
 ****
 
